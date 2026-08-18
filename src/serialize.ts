@@ -6,7 +6,7 @@
  * turns. Image content is rejected explicitly because this wire route is
  * text-only.
  *
- * @module deepseek-harness-friendli/serialize
+ * @module dsh-llm-friendli/serialize
  */
 
 import { contentHasImage, LlmError } from '@deepseek-ai/dsh-llm'

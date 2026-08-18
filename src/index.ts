@@ -8,7 +8,7 @@
  * {@link Config.apiKeyEnv} (default `FRIENDLI_TOKEN`) at each request, so a
  * request without any key fails with `MISSING_CREDENTIAL` rather than at load.
  *
- * @module deepseek-harness-friendli
+ * @module dsh-llm-friendli
  */
 
 import type { Context } from '@deepseek-ai/cordis'
@@ -24,7 +24,7 @@ export type { FriendliModel, ReasoningCapability } from './models.ts'
 export type { RequestDefaults } from './serialize.ts'
 
 /** The plugin name and the LLM service it injects. */
-export const name = 'deepseek-harness-friendli'
+export const name = 'dsh-llm-friendli'
 export const inject = ['llm']
 
 const DEFAULT_API_KEY_ENV = 'FRIENDLI_TOKEN'
@@ -86,7 +86,7 @@ export function apply(ctx: Context, config: Config): void {
     const key = tokenFromEnv(apiKeyEnv)
     if (key === undefined) {
       return Promise.reject(new LlmError(
-        `deepseek-harness-friendli: no API key for providers [${providers.join(', ')}];`
+        `dsh-llm-friendli: no API key for providers [${providers.join(', ')}];`
         + ` export ${apiKeyEnv} in the launching environment`,
         'MISSING_CREDENTIAL',
       ))

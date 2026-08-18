@@ -6,7 +6,7 @@
  * block per content, reasoning, or tool-call index. Finish reason and the
  * latest usage are deferred to `[DONE]`, so no chunk ever follows `finish`.
  *
- * @module deepseek-harness-friendli/translate
+ * @module dsh-llm-friendli/translate
  */
 
 import { CallId, EMPTY_RESPONSE_CODE, LlmError } from '@deepseek-ai/dsh-llm'

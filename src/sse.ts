@@ -4,7 +4,7 @@
  * protocol detail: the literal `[DONE]` is yielded so the caller owns final
  * flushing, and EOF before it is a truncated response.
  *
- * @module deepseek-harness-friendli/sse
+ * @module dsh-llm-friendli/sse
  */
 
 import { EventSourceParserStream } from 'eventsource-parser/stream'

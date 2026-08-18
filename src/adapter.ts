@@ -5,7 +5,7 @@
  * the authoritative source for ids, context windows, output caps, and reasoning
  * capability, so nothing here is hand-maintained.
  *
- * @module deepseek-harness-friendli/adapter
+ * @module dsh-llm-friendli/adapter
  */
 
 import {

@@ -1,4 +1,4 @@
-# deepseek-harness-friendli
+# dsh-llm-friendli
 
 A [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) LLM adapter for [FriendliAI](https://friendli.ai) serverless inference. Friendli speaks the OpenAI-compatible chat-completions API, so this plugin implements the harness `LlmAdapter` contract over it and pulls its model catalog from Friendli at runtime.
 
@@ -12,10 +12,16 @@ A [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) LLM adapte
 
 ## Install
 
-Until this is published to npm, install from GitHub:
+Install from npm:
 
 ```bash
-pnpm add github:Lee-Si-Yoon/deepseek-harness-friendli
+pnpm add dsh-llm-friendli
+```
+
+Or from GitHub for the latest unreleased changes:
+
+```bash
+pnpm add github:Lee-Si-Yoon/dsh-llm-friendli
 ```
 
 Peer dependencies (provided by your harness composition): `@deepseek-ai/dsh-llm`, `@deepseek-ai/cordis`, `@deepseek-ai/schemastery`.
@@ -35,8 +41,8 @@ Get a token from the [Friendli dashboard](https://friendli.ai).
 Add the adapter to your `cordis.yml` and point an agent at a Friendli model id. See [`examples/cordis.yml`](examples/cordis.yml) for a complete fragment.
 
 ```yaml
-- id: deepseek-harness-friendli
-  name: 'deepseek-harness-friendli'
+- id: dsh-llm-friendli
+  name: 'dsh-llm-friendli'
   config:
     apiKeyEnv: FRIENDLI_TOKEN                       # default
     baseURL: https://api.friendli.ai/serverless/v1  # default

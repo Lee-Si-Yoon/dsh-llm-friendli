@@ -11,7 +11,7 @@
  * permissions, region, and lifecycle still apply at inference time, surfaced as
  * an `LlmError` from the stream path rather than hidden by this catalog.
  *
- * @module deepseek-harness-friendli/models
+ * @module dsh-llm-friendli/models
  */
 
 import { attributionHeaders, LlmError } from '@deepseek-ai/dsh-llm'

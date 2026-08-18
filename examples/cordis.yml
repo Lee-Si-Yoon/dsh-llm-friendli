@@ -2,8 +2,8 @@
 #
 # Load this alongside the rest of your composition. The API token is read from
 # the environment ($FRIENDLI_TOKEN by default), never inlined here.
-- id: deepseek-harness-friendli
-  name: 'deepseek-harness-friendli'
+- id: dsh-llm-friendli
+  name: 'dsh-llm-friendli'
   config:
     # Environment variable holding the bearer token. Default: FRIENDLI_TOKEN.
     apiKeyEnv: FRIENDLI_TOKEN

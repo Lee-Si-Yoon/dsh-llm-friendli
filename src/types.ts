@@ -6,7 +6,7 @@
  * (models + chat/completions) and the reasoning guide
  * (https://friendli.ai/docs/guides/reasoning), 2026-08.
  *
- * @module deepseek-harness-friendli/types
+ * @module dsh-llm-friendli/types
  */
 
 /** Request body for `POST {baseURL}/chat/completions`. Always streaming. */
