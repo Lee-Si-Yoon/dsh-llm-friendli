@@ -34,6 +34,7 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "prepare": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit -p tsconfig.build.json",
     "test": "vitest run --exclude '**/*.live.test.ts'",
     "test:e2e": "vitest run tests/e2e.live.test.ts",
