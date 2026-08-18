@@ -1,0 +1,26 @@
+# FriendliAI adapter — a `cordis.yml` fragment.
+#
+# Load this alongside the rest of your composition. The API token is read from
+# the environment ($FRIENDLI_TOKEN by default), never inlined here.
+- id: deepseek-harness-friendli
+  name: 'deepseek-harness-friendli'
+  config:
+    # Environment variable holding the bearer token. Default: FRIENDLI_TOKEN.
+    apiKeyEnv: FRIENDLI_TOKEN
+    # Endpoint base. Default: the public serverless endpoint below.
+    baseURL: https://api.friendli.ai/serverless/v1
+    # Provider route(s) this adapter serves. Default: [friendli].
+    providers:
+      - friendli
+    # Controllable-reasoning stance for models that expose a toggle:
+    # 'enabled' | 'disabled'. Omit to leave the model's own default.
+    thinking: enabled
+
+# Point an agent at a Friendli model id (as returned by GET /models):
+- id: agent-loop
+  name: '@deepseek-ai/dsh-agent-loop'
+  config:
+    agents:
+      - id: main
+        provider: friendli
+        model: zai-org/GLM-5.2

@@ -1,0 +1,54 @@
+{
+  "name": "deepseek-harness-friendli",
+  "version": "0.1.0",
+  "description": "FriendliAI serverless LLM adapter for DeepSeek Harness — OpenAI-compatible chat completions with dynamic model discovery and reasoning support",
+  "keywords": [
+    "deepseek-harness",
+    "dsh-plugin",
+    "friendli",
+    "friendliai",
+    "llm-adapter"
+  ],
+  "license": "MIT",
+  "author": "Lee-Si-Yoon",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lee-Si-Yoon/deepseek-harness-friendli.git"
+  },
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/**/*.js",
+    "lib/**/*.d.ts"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit -p tsconfig.build.json",
+    "test": "vitest run",
+    "lint:all": "tsc --noEmit && vitest run"
+  },
+  "dependencies": {
+    "eventsource-parser": "^3.1.0"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.0",
+    "@deepseek-ai/dsh-llm": "^0.0.1-rc.1",
+    "@deepseek-ai/schemastery": "^3.18.0"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.0",
+    "@deepseek-ai/dsh-llm": "^0.0.1-rc.1",
+    "@deepseek-ai/schemastery": "^3.18.0",
+    "@types/node": "^26.2.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0"
+  }
+}
