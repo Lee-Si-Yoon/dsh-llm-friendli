@@ -10,6 +10,23 @@ A [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) LLM adapte
 - **Stable error codes** — HTTP and transport failures become `LlmError` with codes (`AUTH`, `RATE_LIMIT`, `MODEL_NOT_FOUND`, …); model-list failures are distinct from inference failures.
 - **`AbortSignal` forwarding** and mandatory `attributionHeaders()` on every request, per the harness adapter contract.
 
+## Quick start
+
+Add the plugin to a profile and launch the web UI — nothing else to configure:
+
+```bash
+dsh install                                    # install the dsh CLI
+dsh plugin --profile web add dsh-llm-friendli  # register the friendli provider
+export FRIENDLI_TOKEN="flp_..."                # your Friendli token
+dsh web                                        # friendli provider is live
+```
+
+`dsh plugin add` merges this package's bundle patch (`cordis.patch.yml`) into the
+profile automatically — you do **not** edit `cordis.patch.yml` by hand. Every
+Config field has a default, so the `friendli` provider works out of the box; just
+export `FRIENDLI_TOKEN` and pick a Friendli model in the web UI. Confirm the layer
+loaded with `dsh --profile web --dump-config` (look for `# == dsh-llm-friendli`).
+
 ## Install
 
 Install from npm:
