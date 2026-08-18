@@ -17,7 +17,9 @@ import {
 import type {
   GenerateOptions,
   LlmModelInfo,
+  LlmModelReasoningInfo,
   LlmProviderInfo,
+  LlmReasoningEffortInfo,
   LlmResolvedModelInfo,
   StreamChunk,
 } from '@deepseek-ai/dsh-llm'
@@ -61,10 +63,37 @@ export interface FriendliAdapterOptions {
 
 const OFF = ReasoningEffortId('off')
 const ON = ReasoningEffortId('on')
-const TOGGLE_EFFORTS = [
-  { id: OFF, name: 'Off' },
-  { id: ON, name: 'On' },
-] as const
+
+/**
+ * Build the selectable reasoning efforts from a model's advertised capabilities.
+ * A `toggle` capability contributes the on/off pair; an `effort` capability
+ * contributes each named level (`high`, `max`, …) as its own selectable id —
+ * these ride the wire verbatim as `reasoning_effort`, which Friendli honors.
+ * Returns `undefined` when the model advertises no controllable reasoning, so
+ * always-reasoning models expose no selector.
+ */
+function reasoningInfo(model: FriendliModel): LlmModelReasoningInfo | undefined {
+  if (!model.reasoning) return undefined
+  const efforts: LlmReasoningEffortInfo[] = []
+  const seen = new Set<string>()
+  const push = (id: string, name: string): void => {
+    if (seen.has(id)) return
+    seen.add(id)
+    efforts.push({ id: ReasoningEffortId(id), name })
+  }
+  for (const option of model.reasoningOptions) {
+    if (option.type === 'toggle') {
+      push(OFF, 'Off')
+      push(ON, 'On')
+    } else if (option.type === 'effort') {
+      for (const value of option.values ?? []) push(value, value)
+    }
+  }
+  if (efforts.length === 0) return undefined
+  // Prefer an explicit on/off default; otherwise the first advertised level.
+  const defaultEffort = seen.has(ON) ? ON : efforts[0]!.id
+  return { efforts, defaultEffort }
+}
 
 /** Map an HTTP status to a stable LlmError code. */
 export function httpErrorCode(status: number): string {
@@ -131,14 +160,12 @@ export class FriendliAdapter extends LlmAdapter {
       ...base,
       ...found?.contextWindow === undefined ? {} : { context: { contextWindow: found.contextWindow } },
       ...found?.maxTokens === undefined ? {} : { defaultMaxTokens: found.maxTokens },
-      // Only advertise selectable efforts for models whose listing shows a
-      // `toggle` capability. Effort/budget descriptors are surfaced as the same
-      // on/off toggle here: the serverless reasoning API is documented only for
-      // enable_thinking, so promoting effort levels would offer choices the
-      // wire cannot honor. Reasoning stays adapter-authoritative — never a core enum.
-      ...found?.reasoning && found.reasoningOptions.some(option => option.type === 'toggle')
-        ? { reasoning: { efforts: TOGGLE_EFFORTS, defaultEffort: ON } }
-        : {},
+      // Advertise exactly the reasoning controls the listing shows: a `toggle`
+      // capability yields off/on; an `effort` capability yields each named level
+      // (e.g. high, max). Named levels ride the wire as `reasoning_effort`, which
+      // Friendli honors directly. Reasoning stays adapter-authoritative — never a
+      // core enum — and always-reasoning models expose no selector.
+      ...found === undefined ? {} : (info => info === undefined ? {} : { reasoning: info })(reasoningInfo(found)),
     }
   }
 

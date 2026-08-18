@@ -9,16 +9,23 @@
  * @module dsh-llm-friendli/serialize
  */
 
-import { contentHasImage, LlmError } from '@deepseek-ai/dsh-llm'
+import { contentHasImage, LlmError, ReasoningEffortId } from '@deepseek-ai/dsh-llm'
 import type { ContentBlock, GenerateOptions, Message } from '@deepseek-ai/dsh-llm'
 import type { WireMessage, WireRequest, WireTool } from './types.ts'
+
+/**
+ * Reserved effort ids mapping to Friendli's on/off `enable_thinking` switch.
+ * Named effort levels (e.g. `high`, `max`) are sent verbatim as `reasoning_effort`.
+ */
+export const OFF_EFFORT = ReasoningEffortId('off')
+export const ON_EFFORT = ReasoningEffortId('on')
 
 /** Adapter-level request defaults resolved from plugin config. */
 export interface RequestDefaults {
   /**
-   * Controllable-reasoning stance for models that expose a `toggle` capability:
-   * `enabled` sends `chat_template_kwargs.enable_thinking=true`, `disabled`
-   * sends `false`. Undefined leaves the model's own default in place.
+   * Fallback reasoning stance used only when a request carries no
+   * `reasoningEffort`: `enabled` sends `chat_template_kwargs.enable_thinking=true`,
+   * `disabled` sends `false`. Undefined leaves the model's own default in place.
    */
   thinking?: 'enabled' | 'disabled' | undefined
 }
@@ -96,22 +103,37 @@ export function serializeMessages(messages: readonly Message[]): WireMessage[] {
 }
 
 /**
- * Resolve the reasoning stance for one request. Friendli controllable models
- * read `enable_thinking` from `chat_template_kwargs`; `parse_reasoning` +
- * `include_reasoning` split the reasoning tokens into `reasoning_content`.
- * We always request the split so the translator gets a clean channel, and
- * gate `enable_thinking` on the resolved on/off stance.
+ * Resolve the reasoning stance for one request. `parse_reasoning` +
+ * `include_reasoning` always split reasoning tokens into `reasoning_content` so
+ * the translator gets a clean channel. The on/off vs. effort-level decision
+ * comes from the caller's selected effort, falling back to the adapter default:
+ *
+ * - `off` → `chat_template_kwargs.enable_thinking=false` (reasoning suppressed).
+ * - `on` → `enable_thinking=true` (thinking on, provider picks the depth).
+ * - a named level (`high`, `max`, …) → `reasoning_effort` sent verbatim; Friendli
+ *   honors it directly, so no `enable_thinking` is needed.
+ * - no effort → the adapter's `thinking` default gates `enable_thinking`.
+ *
+ * A `session-title` call always wants visible text, never a thinking budget.
  */
 function resolveReasoning(
   options: GenerateOptions,
   defaults: RequestDefaults,
-): Pick<WireRequest, 'chat_template_kwargs' | 'parse_reasoning' | 'include_reasoning'> {
-  // A session-title call wants visible text, never a thinking budget.
-  const thinking = options.purpose === 'session-title' ? 'disabled' : defaults.thinking
+): Pick<WireRequest, 'chat_template_kwargs' | 'parse_reasoning' | 'include_reasoning' | 'reasoning_effort'> {
+  const split = { parse_reasoning: true, include_reasoning: true } as const
+  if (options.purpose === 'session-title') {
+    return { ...split, chat_template_kwargs: { enable_thinking: false } }
+  }
+  const effort = options.reasoningEffort
+  if (effort === OFF_EFFORT) return { ...split, chat_template_kwargs: { enable_thinking: false } }
+  if (effort === ON_EFFORT) return { ...split, chat_template_kwargs: { enable_thinking: true } }
+  if (effort !== undefined) return { ...split, reasoning_effort: effort }
+  // No per-request effort: fall back to the adapter-level thinking default.
   return {
-    parse_reasoning: true,
-    include_reasoning: true,
-    ...thinking !== undefined ? { chat_template_kwargs: { enable_thinking: thinking === 'enabled' } } : {},
+    ...split,
+    ...defaults.thinking !== undefined
+      ? { chat_template_kwargs: { enable_thinking: defaults.thinking === 'enabled' } }
+      : {},
   }
 }
 

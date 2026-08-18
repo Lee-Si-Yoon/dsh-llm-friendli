@@ -30,10 +30,12 @@ describe.skipIf(!token)('friendli live e2e', () => {
     expect(models.every(m => m.id.length > 0)).toBe(true)
   })
 
-  it('resolveModel surfaces a reasoning toggle for GLM-5.2', async () => {
+  it('resolveModel surfaces on/off plus advertised effort levels for GLM-5.2', async () => {
     const info = await adapter.resolveModel('friendli', MODEL)
     expect(info.id).toBe(MODEL)
-    expect(info.reasoning?.efforts.map(e => e.id)).toEqual(['off', 'on'])
+    // GLM-5.2 advertises a toggle plus effort levels high/max in /models.
+    const ids = info.reasoning?.efforts.map(e => e.id) ?? []
+    expect(ids).toEqual(expect.arrayContaining(['off', 'on', 'high', 'max']))
     expect(info.context?.contextWindow).toBeGreaterThan(0)
   })
 
