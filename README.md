@@ -15,11 +15,14 @@ A [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) LLM adapte
 Add the plugin to a profile and launch the web UI — nothing else to configure:
 
 ```bash
-dsh install                                    # install the dsh CLI
-dsh plugin --profile web add dsh-llm-friendli  # register the friendli provider
-export FRIENDLI_TOKEN="flp_..."                # your Friendli token
-dsh web                                        # friendli provider is live
+npm i -g @deepseek-ai/dsh                       # install the dsh CLI (Node.js required)
+dsh plugin --profile web add dsh-llm-friendli   # register the friendli provider
+export FRIENDLI_TOKEN="flp_..."                 # your Friendli token
+dsh web                                         # friendli provider is live
 ```
+
+No global install? Prefix each `dsh` with `npx @deepseek-ai/dsh` instead
+(`npx @deepseek-ai/dsh web`).
 
 `dsh plugin add` merges this package's bundle patch (`cordis.patch.yml`) into the
 profile automatically — you do **not** edit `cordis.patch.yml` by hand. Every
