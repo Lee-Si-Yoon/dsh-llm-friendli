@@ -125,7 +125,7 @@ export async function fetchModels(
     throw new LlmError(`could not reach ${url}`, 'MODEL_LIST_FAILED', { cause: error })
   }
   if (!response.ok) {
-    const hint = response.status === 401 || response.status === 403 ? '; check FRIENDLI_TOKEN' : ''
+    const hint = response.status === 401 || response.status === 403 ? '; check FRIENDLI_API_KEY' : ''
     throw new LlmError(`${url} answered ${response.status}${hint}`, 'MODEL_LIST_FAILED', { status: response.status })
   }
   let body: WireModelList

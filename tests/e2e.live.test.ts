@@ -1,7 +1,7 @@
 /**
- * Live e2e against the real Friendli serverless API. Requires FRIENDLI_TOKEN.
+ * Live e2e against the real Friendli serverless API. Requires FRIENDLI_API_KEY.
  * NOT run by the default `test` script or CI — invoke explicitly:
- *   FRIENDLI_TOKEN=... pnpm run test:e2e
+ *   FRIENDLI_API_KEY=... pnpm run test:e2e
  * The token is never logged; failures print codes, not headers or bodies.
  */
 import { describe, expect, it } from 'vitest'
@@ -9,7 +9,7 @@ import { fetchModels } from '../src/models.ts'
 import { FriendliAdapter, PUBLIC_BASE_URL } from '../src/adapter.ts'
 import type { StreamChunk } from '@deepseek-ai/dsh-llm'
 
-const token = process.env.FRIENDLI_TOKEN
+const token = process.env.FRIENDLI_API_KEY
 const MODEL = 'zai-org/GLM-5.2'
 
 describe.skipIf(!token)('friendli live e2e', () => {

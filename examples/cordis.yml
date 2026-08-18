@@ -1,12 +1,12 @@
 # FriendliAI adapter — a `cordis.yml` fragment.
 #
-# Load this alongside the rest of your composition. The API token is read from
-# the environment ($FRIENDLI_TOKEN by default), never inlined here.
+# Load this alongside the rest of your composition. The API key is read from
+# the environment ($FRIENDLI_API_KEY by default), never inlined here.
 - id: dsh-llm-friendli
   name: 'dsh-llm-friendli'
   config:
-    # Environment variable holding the bearer token. Default: FRIENDLI_TOKEN.
-    apiKeyEnv: FRIENDLI_TOKEN
+    # Environment variable holding the bearer token. Default: FRIENDLI_API_KEY.
+    apiKeyEnv: FRIENDLI_API_KEY
     # Endpoint base. Default: the public serverless endpoint below.
     baseURL: https://api.friendli.ai/serverless/v1
     # Provider route(s) this adapter serves. Default: [friendli].

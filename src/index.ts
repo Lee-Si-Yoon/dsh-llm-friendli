@@ -4,8 +4,8 @@
  * `cordis.yml` config, and the model catalog is fetched from Friendli's
  * `GET /models` at runtime — nothing about the model list is hand-maintained.
  *
- * The API token is read from the environment variable named by
- * {@link Config.apiKeyEnv} (default `FRIENDLI_TOKEN`) at each request, so a
+ * The API key is read from the environment variable named by
+ * {@link Config.apiKeyEnv} (default `FRIENDLI_API_KEY`) at each request, so a
  * request without any key fails with `MISSING_CREDENTIAL` rather than at load.
  *
  * @module dsh-llm-friendli
@@ -27,7 +27,7 @@ export type { RequestDefaults } from './serialize.ts'
 export const name = 'dsh-llm-friendli'
 export const inject = ['llm']
 
-const DEFAULT_API_KEY_ENV = 'FRIENDLI_TOKEN'
+const DEFAULT_API_KEY_ENV = 'FRIENDLI_API_KEY'
 const DEFAULT_MODEL_CACHE_TTL_MS = 60_000
 
 /**
@@ -37,7 +37,7 @@ const DEFAULT_MODEL_CACHE_TTL_MS = 60_000
  * defaults to the model's own behavior.
  */
 export interface Config {
-  /** Environment variable holding the bearer token; defaults to `FRIENDLI_TOKEN`. */
+  /** Environment variable holding the bearer token; defaults to `FRIENDLI_API_KEY`. */
   apiKeyEnv?: string
   /** Endpoint base; defaults to `https://api.friendli.ai/serverless/v1`. */
   baseURL?: string
