@@ -1,5 +1,7 @@
 # dsh-llm-friendli
 
+[![npm](https://img.shields.io/npm/v/dsh-llm-friendli)](https://www.npmjs.com/package/dsh-llm-friendli)
+
 A [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) plugin that adds [FriendliAI](https://friendli.ai) as an LLM provider. Friendli speaks the OpenAI-compatible chat API, so the adapter implements the harness `LlmAdapter` contract over it and fetches the model catalog from Friendli at runtime.
 
 ## Quick start
@@ -50,44 +52,6 @@ To use it outside `dsh web`, point an agent at a Friendli model id (as returned 
       - id: main
         provider: friendli
         model: zai-org/GLM-5.2
-```
-
-## Reasoning
-
-Friendli parses reasoning model-agnostically. The adapter always requests `parse_reasoning: true` and `include_reasoning: true`, so reasoning tokens arrive on `delta.reasoning_content` and become harness `reasoning` blocks. Two kinds of model ([Friendli docs](https://friendli.ai/docs/guides/reasoning)):
-
-- **Always-reasoning** (e.g. `MiniMaxAI/MiniMax-M2.5`) reason regardless; the `thinking` config does nothing.
-- **Controllable** (e.g. `zai-org/GLM-5.2`) map `thinking: enabled|disabled` to `chat_template_kwargs.enable_thinking`. The adapter exposes an on/off toggle only for models whose `/models` entry declares a `toggle` capability. It does not expose discrete effort levels, because the serverless reasoning API documents only the on/off switch.
-
-## Troubleshooting
-
-| Code | Meaning |
-|---|---|
-| `MISSING_CREDENTIAL` | `FRIENDLI_API_KEY` (or your `apiKeyEnv`) is unset or blank |
-| `AUTH` (401) | Invalid or expired key |
-| `FORBIDDEN` (403) | Account lacks access to the model |
-| `MODEL_NOT_FOUND` (404) | Model id unavailable or deprecated |
-| `RATE_LIMIT` (429) | Friendli rate limit reached |
-| `SERVER` (5xx) | Temporary provider-side failure |
-| `MODEL_LIST_FAILED` | Runtime `GET /models` discovery failed (distinct from an inference failure) |
-
-## Install as a dependency
-
-To vendor the adapter into your own harness composition instead of a profile:
-
-```bash
-pnpm add dsh-llm-friendli                          # from npm
-pnpm add github:Lee-Si-Yoon/dsh-llm-friendli       # or the latest from GitHub
-```
-
-Peer dependencies (from your harness): `@deepseek-ai/dsh-llm`, `@deepseek-ai/cordis`, `@deepseek-ai/schemastery`.
-
-## Develop
-
-```bash
-pnpm install
-pnpm run lint:all   # typecheck + tests in one pass
-pnpm run build
 ```
 
 ## License
