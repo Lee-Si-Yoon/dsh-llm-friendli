@@ -32,8 +32,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit -p tsconfig.build.json",
-    "test": "vitest run",
-    "lint:all": "tsc --noEmit && vitest run"
+    "test": "vitest run --exclude '**/*.live.test.ts'",
+    "test:e2e": "vitest run tests/e2e.live.test.ts",
+    "lint:all": "tsc --noEmit -p tsconfig.build.json && vitest run --exclude '**/*.live.test.ts'"
   },
   "dependencies": {
     "eventsource-parser": "^3.1.0"
