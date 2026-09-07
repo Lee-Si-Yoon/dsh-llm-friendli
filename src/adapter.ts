@@ -159,7 +159,13 @@ export class FriendliAdapter extends LlmAdapter {
     return {
       ...base,
       ...found?.contextWindow === undefined ? {} : { context: { contextWindow: found.contextWindow } },
-      ...found?.maxTokens === undefined ? {} : { defaultMaxTokens: found.maxTokens },
+      // The catalog's `max_completion_tokens` is the model's output CAPACITY
+      // (often == context_length), not a per-request cap. Advertising it as
+      // `defaultMaxTokens` makes the harness send max_tokens == the full
+      // context window, so prompt + max_tokens > context_length and Friendli
+      // rejects every request ("maximum context length ... requested N output
+      // tokens"). Omit it and the provider's own output default applies;
+      // explicit request-level maxTokens still wins.
       // Advertise exactly the reasoning controls the listing shows: a `toggle`
       // capability yields off/on; an `effort` capability yields each named level
       // (e.g. high, max). Named levels ride the wire as `reasoning_effort`, which
