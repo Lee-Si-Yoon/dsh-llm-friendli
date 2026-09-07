@@ -11,7 +11,7 @@ Install the `dsh` CLI, add the plugin to a profile, export your key, and launch:
 ```bash
 npm i -g @deepseek-ai/dsh                       # the dsh CLI (needs Node.js)
 dsh plugin --profile web add dsh-llm-friendli   # register the friendli provider
-export FRIENDLI_API_KEY="flp_..."               # your Friendli key
+export FRIENDLIAI_API_KEY="flp_..."               # your Friendli key
 dsh web                                         # friendli is now a provider
 ```
 
@@ -35,7 +35,7 @@ The defaults work out of the box. To override any of them, add a config block in
 - id: dsh-llm-friendli
   name: 'dsh-llm-friendli'
   config:
-    apiKeyEnv: FRIENDLI_API_KEY                     # default
+    apiKeyEnv: FRIENDLIAI_API_KEY                     # default
     baseURL: https://api.friendli.ai/serverless/v1  # default
     providers: [friendli]                           # default
     thinking: enabled                               # optional; on/off for controllable models

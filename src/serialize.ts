@@ -14,6 +14,28 @@ import type { ContentBlock, GenerateOptions, Message } from '@deepseek-ai/dsh-ll
 import type { WireMessage, WireRequest, WireTool } from './types.ts'
 
 /**
+ * Normalize an upstream JSON Schema for Friendli: its validator rejects any
+ * `oneOf` with multiple branches (dsh emits `oneOf: [{type:'string'}, {type:'null'}]`
+ * for optional tool parameters). Unwrap multi-branch oneOf to its first
+ * non-null branch (description kept), recursively. ponytail: first branch wins
+ * on genuinely ambiguous unions; revisit only if a tool needs it.
+ */
+function friendliSchema(schema: unknown): unknown {
+  if (Array.isArray(schema)) return schema.map(friendliSchema)
+  if (typeof schema !== 'object' || schema === null) return schema
+  const node = schema as Record<string, unknown>
+  if (Array.isArray(node['oneOf']) && (node['oneOf'] as unknown[]).length > 1) {
+    const branches = node['oneOf'] as Record<string, unknown>[]
+    const pick = branches.find(b => !(typeof b === 'object' && b !== null && b['type'] === 'null'))
+      ?? branches[0] as Record<string, unknown> // all-null oneOf: keep desc, treat as string
+    return friendliSchema({ ...pick, description: node['description'] ?? (pick as Record<string, unknown>)['description'] })
+  }
+  const out: Record<string, unknown> = {}
+  for (const [key, value] of Object.entries(node)) out[key] = key === 'oneOf' ? value : friendliSchema(value)
+  return out
+}
+
+/**
  * Reserved effort ids mapping to Friendli's on/off `enable_thinking` switch.
  * Named effort levels (e.g. `high`, `max`) are sent verbatim as `reasoning_effort`.
  */
@@ -153,7 +175,7 @@ export function serializeRequest(options: GenerateOptions, defaults: RequestDefa
 
   const tools: WireTool[] | undefined = options.tools?.map(tool => ({
     type: 'function',
-    function: { name: tool.name, description: tool.description, parameters: tool.parameters },
+    function: { name: tool.name, description: tool.description, parameters: friendliSchema(tool.parameters) as Record<string, unknown> },
   }))
 
   return {
