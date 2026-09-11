@@ -40,6 +40,7 @@ The defaults work out of the box. To override any of them, add a config block in
     providers: [friendli]                           # default
     thinking: enabled                               # optional; on/off for controllable models
     modelCacheTtlMs: 60000                          # default; model-catalog cache
+    extraHeaders: { X-Title: DeepSeek Harness }     # optional; static headers merged after attribution
 ```
 
 To use it outside `dsh web`, point an agent at a Friendli model id (as returned by `GET /models`). See [`examples/cordis.yml`](examples/cordis.yml) for a full fragment.

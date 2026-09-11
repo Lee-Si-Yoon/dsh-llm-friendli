@@ -107,6 +107,7 @@ export async function fetchModels(
   baseURL: string,
   apiKey: string | undefined,
   signal?: AbortSignal,
+  extraHeaders: Readonly<Record<string, string>> = {},
 ): Promise<readonly FriendliModel[]> {
   const url = listingUrl(baseURL)
   let response: Response
@@ -117,6 +118,7 @@ export async function fetchModels(
         accept: 'application/json',
         ...apiKey === undefined ? {} : { authorization: `Bearer ${apiKey}` },
         ...attributionHeaders(),
+        ...extraHeaders,
       },
       ...signal === undefined ? {} : { signal },
     })

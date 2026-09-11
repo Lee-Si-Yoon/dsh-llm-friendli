@@ -51,6 +51,12 @@ export interface Config {
   thinking?: 'enabled' | 'disabled'
   /** Model-catalog cache TTL in milliseconds (default 60,000). */
   modelCacheTtlMs?: number
+  /**
+   * Extra static headers merged into every provider request after the
+   * harness attribution set (per-config values win per header name).
+   * Route attribution (X-Title/HTTP-Referer) is baked here at config time.
+   */
+  extraHeaders?: Record<string, string>
 }
 
 export const Config: Schema<Config> = Schema.object({
@@ -59,6 +65,7 @@ export const Config: Schema<Config> = Schema.object({
   providers: Schema.array(Schema.string()).default(['friendli']),
   thinking: Schema.union(['enabled', 'disabled']),
   modelCacheTtlMs: Schema.number().min(0).default(DEFAULT_MODEL_CACHE_TTL_MS),
+  extraHeaders: Schema.dict(Schema.string()).default({}),
 })
 
 /**
@@ -80,6 +87,7 @@ export function apply(ctx: Context, config: Config): void {
     baseURL: config.baseURL ?? PUBLIC_BASE_URL,
     defaults: { thinking: config.thinking },
     modelCacheTtlMs: config.modelCacheTtlMs ?? DEFAULT_MODEL_CACHE_TTL_MS,
+    extraHeaders: config.extraHeaders ?? {},
   })
 
   const resolveApiKey = (): Promise<string> => {

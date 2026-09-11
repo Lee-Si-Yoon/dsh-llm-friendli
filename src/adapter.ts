@@ -42,6 +42,8 @@ export interface FriendliConnectionOptions {
   defaults: RequestDefaults
   /** Time-to-live for the cached model catalog, in milliseconds. */
   modelCacheTtlMs: number
+  /** Static extra headers merged into every request (after attribution). */
+  extraHeaders: Readonly<Record<string, string>>
 }
 
 /** Operation-local resolution hooks the plugin owns. */
@@ -137,7 +139,7 @@ export class FriendliAdapter extends LlmAdapter {
     const now = Date.now()
     if (this.cache !== undefined && now - this.cache.at < modelCacheTtlMs) return this.cache.models
     const key = await (this.config.resolveDiscoveryKey?.() ?? Promise.resolve(undefined))
-    const models = await fetchModels(baseURL, key, signal)
+    const models = await fetchModels(baseURL, key, signal, this.config.options().extraHeaders)
     this.cache = { at: now, models }
     return models
   }
@@ -190,6 +192,7 @@ export class FriendliAdapter extends LlmAdapter {
       'content-type': 'application/json',
       accept: 'text/event-stream',
       ...attributionHeaders(),
+      ...connection.extraHeaders,
     }
 
     let response: Response
