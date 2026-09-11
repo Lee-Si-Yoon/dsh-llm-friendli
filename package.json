@@ -1,7 +1,7 @@
 {
   "name": "dsh-llm-friendli",
-  "version": "0.1.6",
-  "description": "FriendliAI serverless LLM adapter for DeepSeek Harness \u2014 OpenAI-compatible chat completions with dynamic model discovery and reasoning support",
+  "version": "0.1.7",
+  "description": "FriendliAI serverless LLM adapter for DeepSeek Harness — OpenAI-compatible chat completions with dynamic model discovery and reasoning support",
   "keywords": [
     "deepseek-harness",
     "dsh-plugin",
